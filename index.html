@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aceite Aragón · CRM</title>
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+  <!-- ===== Topbar ===== -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark"><span>A</span></div>
+      <div>
+        <h1>Aceite Aragón · CRM</h1>
+        <p>Gestión de clientes B2B</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="btn btn-ghost" id="btnAlta">＋ Alta rápida</button>
+      <button class="btn btn-primary" id="btnNuevo">＋ Nuevo cliente</button>
+      <div class="user-chip" id="userChip" title="Cerrar sesión">··</div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="page-head">
+      <div>
+        <h2>Cartera de clientes</h2>
+        <div class="sub">Foto global y seguimiento de cada cliente</div>
+      </div>
+      <div class="sub" id="contadorTotal"></div>
+    </div>
+
+    <!-- ===== Resumen / KPIs ===== -->
+    <div class="resumen" id="resumen"></div>
+
+    <div class="mini-row" id="miniRow"></div>
+
+    <!-- ===== Toolbar filtros ===== -->
+    <div class="toolbar">
+      <div class="search">🔍 <input id="buscar" placeholder="Buscar empresa, contacto, ciudad…"></div>
+      <select class="filtro" id="fPais"><option value="">🌍 Todos los países</option></select>
+      <select class="filtro" id="fEstado"><option value="">◆ Todos los estados</option></select>
+      <select class="filtro" id="fCanal"><option value="">🏷 Todos los canales</option></select>
+      <button class="filtro" id="fAlerta">⚠ Solo con alerta</button>
+    </div>
+
+    <!-- ===== Tabla ===== -->
+    <div class="tabla-card">
+      <div class="tabla-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th data-orden="empresa">Empresa <span class="ar">▾</span></th>
+              <th class="col-hide" data-orden="canal">Canal</th>
+              <th data-orden="pais">País / mercado</th>
+              <th data-orden="estado">Estado</th>
+              <th class="col-hide" data-orden="prioridad">Prioridad</th>
+              <th class="col-hide" data-orden="ultima">Última interacción</th>
+              <th class="col-hide">Próxima acción</th>
+              <th>⚠</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Modal ficha (se rellena por JS) ===== -->
+  <div id="modal"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

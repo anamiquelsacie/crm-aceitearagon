@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acceso · Aceite Aragón CRM</title>
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="mark"><span>A</span></div>
+        <div>
+          <h1>Aceite Aragón</h1>
+          <p>CRM · Gestión de clientes</p>
+        </div>
+      </div>
+
+      <div id="error" class="login-error oculto"></div>
+
+      <div class="campo">
+        <label for="email">Correo</label>
+        <input type="email" id="email" placeholder="tucorreo@aceitearagon.com" autocomplete="username">
+      </div>
+      <div class="campo">
+        <label for="pass">Contraseña</label>
+        <input type="password" id="pass" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary" id="btnEntrar">Entrar</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { entrar, vigilarSesion, traducirError } from "./js/auth.js";
+
+    const $email = document.getElementById("email");
+    const $pass  = document.getElementById("pass");
+    const $error = document.getElementById("error");
+    const $btn   = document.getElementById("btnEntrar");
+
+    // Si ya hay sesión activa, ir directo a la app
+    vigilarSesion(user => {
+      if(user) window.location.href = "index.html";
+    });
+
+    function mostrarError(msg){
+      $error.textContent = msg;
+      $error.classList.remove("oculto");
+    }
+
+    async function hacerLogin(){
+      $error.classList.add("oculto");
+      const email = $email.value;
+      const pass  = $pass.value;
+      if(!email || !pass){
+        mostrarError("Escribe tu correo y contraseña.");
+        return;
+      }
+      $btn.disabled = true;
+      $btn.textContent = "Entrando…";
+      try{
+        await entrar(email, pass);
+        window.location.href = "index.html";
+      }catch(e){
+        mostrarError(traducirError(e.code));
+        $btn.disabled = false;
+        $btn.textContent = "Entrar";
+      }
+    }
+
+    $btn.addEventListener("click", hacerLogin);
+    $pass.addEventListener("keydown", e => { if(e.key==="Enter") hacerLogin(); });
+    $email.addEventListener("keydown", e => { if(e.key==="Enter") $pass.focus(); });
+  </script>
+</body>
+</html>
