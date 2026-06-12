@@ -8,6 +8,7 @@ import {
   estadoInfo, prioridadInfo, bandera
 } from "./clientes.js";
 import { htmlHistorico, conectarHistorico } from "./interacciones.js";
+import { initMapa, refrescarMapa } from "./mapa.js";
 
 // ---------- Protección: sin sesión, fuera ----------
 let usuarioActual = null;
@@ -31,7 +32,24 @@ let orden = { campo:"empresa", asc:true };
 function arrancar(){
   poblarSelectores();
   conectarToolbar();
+  conectarTabs();
   escucharClientes(()=> render());
+}
+
+// ---------- Navegación por pestañas ----------
+function conectarTabs(){
+  document.querySelectorAll(".tab").forEach(t=>{
+    t.addEventListener("click", ()=>{
+      const destino = t.dataset.tab;
+      document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("activo", x===t));
+      document.getElementById("vista-clientes").classList.toggle("oculto", destino!=="clientes");
+      document.getElementById("vista-mapa").classList.toggle("oculto", destino!=="mapa");
+      if(destino==="mapa"){
+        initMapa();
+        refrescarMapa();
+      }
+    });
+  });
 }
 
 // ---------- Lógica de alertas (reglas, sin coste) ----------

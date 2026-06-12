@@ -262,3 +262,53 @@ tbody tr:last-child td{border-bottom:none}
   border:1px solid var(--linea);border-radius:8px;padding:5px 10px;font-size:12.5px;
   color:var(--tinta);background:var(--blanco);outline:none;font-family:inherit;
 }
+
+/* ---------- Pestañas ---------- */
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--linea)}
+.tab{
+  background:none;border:none;cursor:pointer;font-size:14px;font-weight:600;
+  color:var(--gris);padding:11px 18px;border-bottom:2.5px solid transparent;
+  margin-bottom:-1px;transition:.15s;
+}
+.tab:hover{color:var(--verde-hondo)}
+.tab.activo{color:var(--verde);border-bottom-color:var(--verde)}
+
+/* ---------- Mapa ---------- */
+.mapa-cabecera{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:12px;min-height:38px;
+}
+.mapa-titulo{font-size:16px;font-weight:700;color:var(--tinta)}
+.mapa-sub,.mapa-leyenda{font-size:12.5px;color:var(--gris)}
+.mapa-leyenda{display:flex;gap:12px;flex-wrap:wrap;margin-left:auto}
+.leg{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--gris)}
+#mapaCanvas{
+  width:100%;height:560px;border:1px solid var(--linea);border-radius:13px;overflow:hidden;
+  background:#e8eef0;
+}
+
+/* Chincheta de país (burbuja con número) */
+.pin-pais{background:none;border:none}
+.pin-pais-burbuja{
+  width:38px;height:38px;border-radius:50%;background:var(--verde);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;
+  border:3px solid #fff;box-shadow:0 3px 10px rgba(31,90,70,.4);cursor:pointer;
+}
+.pin-pais-nombre{
+  position:absolute;top:42px;left:50%;transform:translateX(-50%);white-space:nowrap;
+  font-size:11px;font-weight:600;color:var(--tinta);background:rgba(255,255,255,.9);
+  padding:1px 7px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.1);
+}
+/* Chincheta de cliente (punto de color) */
+.pin-cliente{background:none;border:none}
+.pin-dot{
+  width:16px;height:16px;border-radius:50%;border:2.5px solid #fff;
+  box-shadow:0 2px 6px rgba(0,0,0,.3);cursor:pointer;
+}
+/* Popup */
+.popup b{font-size:14px;color:var(--tinta)}
+.popup-l{font-size:12.5px;color:var(--gris);margin-top:3px;display:flex;align-items:center;gap:6px}
+
+@media(max-width:560px){
+  #mapaCanvas{height:440px}
+  .mapa-leyenda{margin-left:0}
+}
