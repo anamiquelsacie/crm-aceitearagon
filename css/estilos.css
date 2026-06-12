@@ -312,3 +312,11 @@ tbody tr:last-child td{border-bottom:none}
   #mapaCanvas{height:440px}
   .mapa-leyenda{margin-left:0}
 }
+
+/* Botón Ver ficha dentro del popup del mapa */
+.popup-btn{
+  margin-top:9px;width:100%;background:var(--verde);color:#fff;border:none;
+  border-radius:8px;padding:7px 10px;font-size:12.5px;font-weight:600;cursor:pointer;
+  font-family:inherit;transition:.12s;
+}
+.popup-btn:hover{background:var(--verde-hondo)}

@@ -8,7 +8,7 @@ import {
   estadoInfo, prioridadInfo, bandera
 } from "./clientes.js";
 import { htmlHistorico, conectarHistorico } from "./interacciones.js";
-import { initMapa, refrescarMapa } from "./mapa.js";
+import { initMapa, refrescarMapa, setAbrirFicha } from "./mapa.js";
 
 // ---------- Protección: sin sesión, fuera ----------
 let usuarioActual = null;
@@ -33,7 +33,14 @@ function arrancar(){
   poblarSelectores();
   conectarToolbar();
   conectarTabs();
+  setAbrirFicha(abrirFichaDesdeMapa);
   escucharClientes(()=> render());
+}
+
+// Abre la ficha de un cliente desde el mapa: cambia a la pestaña Clientes y abre el modal
+function abrirFichaDesdeMapa(id){
+  document.querySelector('.tab[data-tab="clientes"]').click();
+  abrirFicha(id);
 }
 
 // ---------- Navegación por pestañas ----------

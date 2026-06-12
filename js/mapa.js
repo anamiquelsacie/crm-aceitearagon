@@ -11,6 +11,14 @@ let map = null;
 let capa = null;          // capa de marcadores actual
 let vista = "mundo";      // "mundo" | "pais"
 let paisActivo = null;
+let abrirFichaCb = null;  // callback que app.js inyecta para abrir la ficha
+
+// app.js llama esto una vez para conectar el "Ver ficha" del mapa con la ficha real
+export function setAbrirFicha(fn){ abrirFichaCb = fn; }
+// el popup llama a esta función global al pulsar "Ver ficha"
+window.__abrirFichaDesdeMapa = function(id){
+  if(abrirFichaCb) abrirFichaCb(id);
+};
 
 // Un cliente cuenta en el mapa si NO es un potencial sin contactar.
 // Es decir: cualquier estado distinto de "potencial" sin interacción.
@@ -100,6 +108,7 @@ function renderPais(pais){
         <div class="popup-l"><span class="dot" style="background:${e.color}"></span>${e.label}</div>
         <div class="popup-l">${bandera(c.pais)} ${escapeHtml(c.ciudad||c.pais||"")}</div>
         ${c.canal?`<div class="popup-l">🏷 ${escapeHtml(c.canal)}</div>`:""}
+        <button class="popup-btn" onclick="window.__abrirFichaDesdeMapa('${c.id}')">Ver ficha →</button>
       </div>`);
     bounds.push(xy);
   });
