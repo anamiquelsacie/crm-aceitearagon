@@ -94,3 +94,62 @@ export async function altaRapida(texto){
   }
   return creados;
 }
+
+// ============================================================
+//  HISTÓRICO DE INTERACCIONES
+// ============================================================
+export const TIPOS_INTERACCION = [
+  { id:"llamada",  label:"Llamada",          icono:"📞" },
+  { id:"correo_e", label:"Correo enviado",   icono:"✉️" },
+  { id:"correo_r", label:"Correo recibido",  icono:"📨" },
+  { id:"nota",     label:"Nota",             icono:"📝" },
+  { id:"reunion",  label:"Reunión",          icono:"🤝" }
+];
+export function tipoInfo(id){ return TIPOS_INTERACCION.find(t=>t.id===id) || TIPOS_INTERACCION[3]; }
+
+// Genera un id único sencillo para cada entrada del histórico
+function nuevoId(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+// Registrar una nueva interacción en un cliente.
+// opts: { tipo, comentario, nuevoEstado?, proximaAccion?, fechaProxima? }
+export async function registrarInteraccion(clienteId, opts){
+  const c = clientes.find(x=>x.id===clienteId);
+  if(!c) throw new Error("Cliente no encontrado");
+
+  const entrada = {
+    id: nuevoId(),
+    tipo: opts.tipo,
+    comentario: opts.comentario || "",
+    fecha: new Date().toISOString()
+  };
+  const historico = [...(c.historico||[]), entrada];
+
+  const cambios = {
+    historico,
+    ultimaInteraccion: serverTimestamp()
+  };
+  if(opts.nuevoEstado) cambios.estado = opts.nuevoEstado;
+  if(opts.proximaAccion !== undefined) cambios.proximaAccion = opts.proximaAccion;
+  if(opts.fechaProxima !== undefined) cambios.fechaProxima = opts.fechaProxima;
+
+  await updateDoc(doc(db,"clientes",clienteId), cambios);
+  return entrada;
+}
+
+// Editar el comentario / tipo de una entrada existente
+export async function editarInteraccion(clienteId, entradaId, cambios){
+  const c = clientes.find(x=>x.id===clienteId);
+  if(!c) throw new Error("Cliente no encontrado");
+  const historico = (c.historico||[]).map(e =>
+    e.id===entradaId ? { ...e, ...cambios } : e
+  );
+  await updateDoc(doc(db,"clientes",clienteId), { historico });
+}
+
+// Borrar una entrada del histórico
+export async function borrarInteraccion(clienteId, entradaId){
+  const c = clientes.find(x=>x.id===clienteId);
+  if(!c) throw new Error("Cliente no encontrado");
+  const historico = (c.historico||[]).filter(e => e.id!==entradaId);
+  await updateDoc(doc(db,"clientes",clienteId), { historico });
+}

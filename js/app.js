@@ -7,6 +7,7 @@ import {
   ESTADOS, CANALES, PRIORIDADES, PRODUCTOS,
   estadoInfo, prioridadInfo, bandera
 } from "./clientes.js";
+import { htmlHistorico, conectarHistorico } from "./interacciones.js";
 
 // ---------- Protección: sin sesión, fuera ----------
 let usuarioActual = null;
@@ -253,6 +254,8 @@ function abrirFicha(id){
           <div class="campo"><label>Incoterm</label><input id="f_incoterm" value="${esc(c.incoterm||"")}" placeholder="EXW, FOB, CIF…"></div>
           <div class="campo"><label>Notas de condiciones</label><input id="f_notascond" value="${esc(c.notasCondiciones||"")}"></div>
         </div>
+
+        ${nuevo ? "" : `<div id="seccionHistorico">${htmlHistorico(c)}</div>`}
       </div>
       <div class="modal-foot">
         <button class="btn btn-ghost" id="cancelar">Cancelar</button>
@@ -265,6 +268,11 @@ function abrirFicha(id){
   document.getElementById("cerrar").addEventListener("click", cerrar);
   document.getElementById("cancelar").addEventListener("click", cerrar);
   document.querySelector(".modal-bg").addEventListener("click", e=>{ if(e.target.classList.contains("modal-bg")) cerrar(); });
+
+  // Histórico de interacciones (solo clientes existentes)
+  if(!nuevo){
+    conectarHistorico(c, ()=> abrirFicha(id));
+  }
 
   document.getElementById("guardar").addEventListener("click", async ()=>{
     const v = id => document.getElementById(id).value.trim();
