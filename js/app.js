@@ -11,6 +11,7 @@ import {
 } from "./clientes.js";
 import { htmlHistorico, conectarHistorico } from "./interacciones.js";
 import { initMapa, refrescarMapa, setAbrirFicha } from "./mapa.js";
+import { initPlantillas } from "./plantillasUI.js";
 
 // ---------- Protección: sin sesión, fuera ----------
 let usuarioActual = null;
@@ -53,10 +54,9 @@ function conectarTabs(){
       document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("activo", x===t));
       document.getElementById("vista-clientes").classList.toggle("oculto", destino!=="clientes");
       document.getElementById("vista-mapa").classList.toggle("oculto", destino!=="mapa");
-      if(destino==="mapa"){
-        initMapa();
-        refrescarMapa();
-      }
+      document.getElementById("vista-plantillas").classList.toggle("oculto", destino!=="plantillas");
+      if(destino==="mapa"){ initMapa(); refrescarMapa(); }
+      if(destino==="plantillas"){ initPlantillas(); }
     });
   });
 }

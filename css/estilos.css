@@ -331,3 +331,23 @@ tbody tr:last-child td{border-bottom:none}
 .papelera-nombre{font-weight:600;font-size:14px;color:var(--tinta)}
 .papelera-acc{display:flex;gap:8px}
 .papelera-acc .btn{padding:7px 12px;font-size:12.5px}
+
+/* ---------- Plantillas ---------- */
+.plt-config{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:18px;
+  background:var(--blanco);border:1px solid var(--linea);border-radius:13px;padding:16px;
+}
+.plt-selectores{display:grid;grid-template-columns:2fr 1.4fr 1.2fr;gap:14px;margin-bottom:16px}
+.plt-preview{
+  background:var(--blanco);border:1px solid var(--linea);border-radius:13px;padding:16px;margin-bottom:14px;
+}
+.plt-preview .campo input,.plt-preview .campo textarea{font-size:13.5px;line-height:1.5}
+.plt-acciones{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.ayuda{cursor:help;color:var(--gris);font-size:12px}
+.plt-aviso{font-size:13px;margin-top:12px;text-align:right;min-height:18px;color:var(--gris)}
+.plt-aviso.visible{padding:10px 13px;border-radius:9px;text-align:left;background:var(--dorado-suave);color:#8a5e12}
+.plt-aviso.visible.ok{background:var(--verde-suave);color:var(--verde-hondo)}
+
+@media(max-width:760px){
+  .plt-config,.plt-selectores{grid-template-columns:1fr}
+}
