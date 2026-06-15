@@ -6,7 +6,7 @@
 // ============================================================
 import { db } from "./firebase.js";
 import {
-  collection, onSnapshot, addDoc, updateDoc, doc,
+  collection, onSnapshot, addDoc, updateDoc, doc, deleteDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -71,6 +71,22 @@ export async function crearCliente(datos){
 export async function actualizarCliente(id, datos){
   return await updateDoc(doc(db,"clientes",id), datos);
 }
+
+// ---------- Archivar / restaurar / borrar definitivo ----------
+export async function archivarCliente(id){
+  return await updateDoc(doc(db,"clientes",id), { archivado:true });
+}
+export async function restaurarCliente(id){
+  return await updateDoc(doc(db,"clientes",id), { archivado:false });
+}
+export async function borrarClienteDefinitivo(id){
+  return await deleteDoc(doc(db,"clientes",id));
+}
+
+// Clientes activos (no archivados) — lo que ve la app normalmente
+export function getActivos(){ return clientes.filter(c=>!c.archivado); }
+// Clientes archivados (papelera)
+export function getArchivados(){ return clientes.filter(c=>c.archivado); }
 
 // ---------- Alta rápida (varios de golpe) ----------
 // Acepta texto con un cliente por línea: "Empresa; País; Canal"
