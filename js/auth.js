@@ -1,7 +1,7 @@
 // ============================================================
 //  auth.js · Login y control de sesión
 // ============================================================
-import { auth } from "./firebase.js";
+import { auth } from "./firebase.js?v=26";
 import {
   signInWithEmailAndPassword,
   signOut,

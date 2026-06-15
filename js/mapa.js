@@ -4,8 +4,8 @@
 //  - Al pulsar un país: zoom y chinchetas por ciudad, color = estado
 //  - Solo clientes contactados (excluye potenciales sin contactar)
 // ============================================================
-import { getClientes, ESTADOS, estadoInfo, bandera } from "./clientes.js";
-import { coordenadas, coordenadasPais, PAISES } from "./geo.js";
+import { getClientes, getActivos, ESTADOS, estadoInfo, bandera } from "./clientes.js?v=26";
+import { coordenadas, coordenadasPais, PAISES } from "./geo.js?v=26";
 
 let map = null;
 let capa = null;          // capa de marcadores actual
@@ -56,7 +56,7 @@ function renderMundo(){
   actualizarCabecera();
 
   const porPais = {};
-  getClientes().filter(contactado).forEach(c=>{
+  getActivos().filter(contactado).forEach(c=>{
     const p = (c.pais||"").trim();
     if(!p) return;
     (porPais[p] = porPais[p] || []).push(c);
@@ -87,7 +87,7 @@ function renderPais(pais){
   limpiarCapa();
   actualizarCabecera();
 
-  const lista = getClientes().filter(c=> contactado(c) && (c.pais||"").trim()===pais);
+  const lista = getActivos().filter(c=> contactado(c) && (c.pais||"").trim()===pais);
   const co = coordenadasPais(pais);
   if(co) map.setView(co, 6);
 

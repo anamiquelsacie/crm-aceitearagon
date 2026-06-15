@@ -5,7 +5,7 @@
 import {
   TIPOS_INTERACCION, tipoInfo, ESTADOS, estadoInfo,
   registrarInteraccion, editarInteraccion, borrarInteraccion
-} from "./clientes.js";
+} from "./clientes.js?v=26";
 
 function esc(s){
   return (s??"").toString()

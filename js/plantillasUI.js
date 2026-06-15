@@ -3,8 +3,8 @@
 //  Permite elegir cliente, fase e idioma, ver/editar el texto,
 //  copiarlo o abrirlo en el correo (mailto) con BCC opcional.
 // ============================================================
-import { getActivos, bandera } from "./clientes.js";
-import { IDIOMAS, FASES, getPlantilla, rellenar } from "./plantillas.js";
+import { getActivos, bandera } from "./clientes.js?v=26";
+import { IDIOMAS, FASES, getPlantilla, rellenar } from "./plantillas.js?v=26";
 
 // La dirección de BCC y los datos del remitente se guardan en localStorage
 // (config local del navegador). Hueco listo para cuando exista la captura de correos.

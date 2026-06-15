@@ -4,7 +4,7 @@
 //  - Pinta el resumen (KPIs), la tabla con filtros y orden
 //  - Abre/edita/crea la ficha de cliente
 // ============================================================
-import { db } from "./firebase.js";
+import { db } from "./firebase.js?v=26";
 import {
   collection, onSnapshot, addDoc, updateDoc, doc, deleteDoc,
   serverTimestamp

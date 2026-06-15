@@ -1,17 +1,18 @@
 // ============================================================
 //  app.js · Orquestador de la pantalla principal
 // ============================================================
-import { vigilarSesion, salir } from "./auth.js";
+import { vigilarSesion, salir } from "./auth.js?v=26";
 import {
   escucharClientes, getClientes, getActivos, getArchivados,
   crearCliente, actualizarCliente, altaRapida,
   archivarCliente, restaurarCliente, borrarClienteDefinitivo,
   ESTADOS, CANALES, PRIORIDADES, PRODUCTOS,
   estadoInfo, prioridadInfo, bandera
-} from "./clientes.js";
-import { htmlHistorico, conectarHistorico } from "./interacciones.js";
-import { initMapa, refrescarMapa, setAbrirFicha } from "./mapa.js";
-import { initPlantillas } from "./plantillasUI.js";
+} from "./clientes.js?v=26";
+import { htmlHistorico, conectarHistorico } from "./interacciones.js?v=26";
+import { initMapa, refrescarMapa, setAbrirFicha } from "./mapa.js?v=26";
+import { initPlantillas } from "./plantillasUI.js?v=26";
+import { renderAgenda, initFlotante, actualizarFlotante, setAgendaCallbacks } from "./agendaUI.js?v=26";
 
 // ---------- Protección: sin sesión, fuera ----------
 let usuarioActual = null;
@@ -37,7 +38,12 @@ function arrancar(){
   conectarToolbar();
   conectarTabs();
   setAbrirFicha(abrirFichaDesdeMapa);
-  escucharClientes(()=> render());
+  setAgendaCallbacks({
+    abrirFicha: abrirFichaDesdeMapa,
+    irAgenda: ()=> document.querySelector('.tab[data-tab="agenda"]').click()
+  });
+  initFlotante();
+  escucharClientes(()=>{ render(); actualizarFlotante(); });
 }
 
 // Abre la ficha de un cliente desde el mapa: cambia a la pestaña Clientes y abre el modal
@@ -55,8 +61,10 @@ function conectarTabs(){
       document.getElementById("vista-clientes").classList.toggle("oculto", destino!=="clientes");
       document.getElementById("vista-mapa").classList.toggle("oculto", destino!=="mapa");
       document.getElementById("vista-plantillas").classList.toggle("oculto", destino!=="plantillas");
+      document.getElementById("vista-agenda").classList.toggle("oculto", destino!=="agenda");
       if(destino==="mapa"){ initMapa(); refrescarMapa(); }
       if(destino==="plantillas"){ initPlantillas(); }
+      if(destino==="agenda"){ renderAgenda(); }
     });
   });
 }
