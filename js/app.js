@@ -1,18 +1,19 @@
 // ============================================================
 //  app.js · Orquestador de la pantalla principal
 // ============================================================
-import { vigilarSesion, salir } from "./auth.js?v=26";
+import { vigilarSesion, salir } from "./auth.js?v=27";
 import {
   escucharClientes, getClientes, getActivos, getArchivados,
   crearCliente, actualizarCliente, altaRapida,
   archivarCliente, restaurarCliente, borrarClienteDefinitivo,
   ESTADOS, CANALES, PRIORIDADES, PRODUCTOS,
   estadoInfo, prioridadInfo, bandera
-} from "./clientes.js?v=26";
-import { htmlHistorico, conectarHistorico } from "./interacciones.js?v=26";
-import { initMapa, refrescarMapa, setAbrirFicha } from "./mapa.js?v=26";
-import { initPlantillas } from "./plantillasUI.js?v=26";
-import { renderAgenda, initFlotante, actualizarFlotante, setAgendaCallbacks } from "./agendaUI.js?v=26";
+} from "./clientes.js?v=27";
+import { htmlHistorico, conectarHistorico } from "./interacciones.js?v=27";
+import { initMapa, refrescarMapa, setAbrirFicha } from "./mapa.js?v=27";
+import { initPlantillas } from "./plantillasUI.js?v=27";
+import { renderAgenda, initFlotante, actualizarFlotante, setAgendaCallbacks } from "./agendaUI.js?v=27";
+import { renderAnalisis } from "./analisisUI.js?v=27";
 
 // ---------- Protección: sin sesión, fuera ----------
 let usuarioActual = null;
@@ -62,9 +63,11 @@ function conectarTabs(){
       document.getElementById("vista-mapa").classList.toggle("oculto", destino!=="mapa");
       document.getElementById("vista-plantillas").classList.toggle("oculto", destino!=="plantillas");
       document.getElementById("vista-agenda").classList.toggle("oculto", destino!=="agenda");
+      document.getElementById("vista-analisis").classList.toggle("oculto", destino!=="analisis");
       if(destino==="mapa"){ initMapa(); refrescarMapa(); }
       if(destino==="plantillas"){ initPlantillas(); }
       if(destino==="agenda"){ renderAgenda(); }
+      if(destino==="analisis"){ renderAnalisis(); }
     });
   });
 }

@@ -4,8 +4,8 @@
 //  - Al pulsar un país: zoom y chinchetas por ciudad, color = estado
 //  - Solo clientes contactados (excluye potenciales sin contactar)
 // ============================================================
-import { getClientes, getActivos, ESTADOS, estadoInfo, bandera } from "./clientes.js?v=26";
-import { coordenadas, coordenadasPais, PAISES } from "./geo.js?v=26";
+import { getClientes, getActivos, ESTADOS, estadoInfo, bandera } from "./clientes.js?v=27";
+import { coordenadas, coordenadasPais, PAISES } from "./geo.js?v=27";
 
 let map = null;
 let capa = null;          // capa de marcadores actual
