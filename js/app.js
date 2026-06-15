@@ -1,19 +1,20 @@
 // ============================================================
 //  app.js · Orquestador de la pantalla principal
 // ============================================================
-import { vigilarSesion, salir } from "./auth.js?v=27";
+import { vigilarSesion, salir } from "./auth.js?v=29";
 import {
   escucharClientes, getClientes, getActivos, getArchivados,
   crearCliente, actualizarCliente, altaRapida,
   archivarCliente, restaurarCliente, borrarClienteDefinitivo,
   ESTADOS, CANALES, PRIORIDADES, PRODUCTOS,
   estadoInfo, prioridadInfo, bandera
-} from "./clientes.js?v=27";
-import { htmlHistorico, conectarHistorico } from "./interacciones.js?v=27";
-import { initMapa, refrescarMapa, setAbrirFicha } from "./mapa.js?v=27";
-import { initPlantillas } from "./plantillasUI.js?v=27";
-import { renderAgenda, initFlotante, actualizarFlotante, setAgendaCallbacks } from "./agendaUI.js?v=27";
-import { renderAnalisis } from "./analisisUI.js?v=27";
+} from "./clientes.js?v=29";
+import { htmlHistorico, conectarHistorico } from "./interacciones.js?v=29";
+import { initMapa, refrescarMapa, setAbrirFicha } from "./mapa.js?v=29";
+import { initPlantillas } from "./plantillasUI.js?v=29";
+import { renderAgenda, initFlotante, actualizarFlotante, setAgendaCallbacks } from "./agendaUI.js?v=29";
+import { renderAnalisis } from "./analisisUI.js?v=29";
+import { initNotas } from "./notasUI.js?v=29";
 
 // ---------- Protección: sin sesión, fuera ----------
 let usuarioActual = null;
@@ -64,10 +65,12 @@ function conectarTabs(){
       document.getElementById("vista-plantillas").classList.toggle("oculto", destino!=="plantillas");
       document.getElementById("vista-agenda").classList.toggle("oculto", destino!=="agenda");
       document.getElementById("vista-analisis").classList.toggle("oculto", destino!=="analisis");
+      document.getElementById("vista-notas").classList.toggle("oculto", destino!=="notas");
       if(destino==="mapa"){ initMapa(); refrescarMapa(); }
       if(destino==="plantillas"){ initPlantillas(); }
       if(destino==="agenda"){ renderAgenda(); }
       if(destino==="analisis"){ renderAnalisis(); }
+      if(destino==="notas"){ initNotas(); }
     });
   });
 }
@@ -228,6 +231,11 @@ function conectarToolbar(){
 }
 
 // ---------- Ficha (crear / editar) ----------
+// Abre el bloque avanzado si el cliente ya tiene datos avanzados rellenos
+function avanzadoAbierto(c){
+  return !!(c.vat || c.direccion || c.web || c.idioma || c.volumen ||
+    (c.productos&&c.productos.length) || c.precioAcordado || c.divisa || c.incoterm || c.notasCondiciones || c.cargo);
+}
 function abrirFicha(id){
   const c = id ? getClientes().find(x=>x.id===id) : {};
   const nuevo = !id;
@@ -242,57 +250,50 @@ function abrirFicha(id){
         <button class="modal-x" id="cerrar">×</button>
       </div>
       <div class="modal-body">
-        <div class="bloque-titulo">Identificación</div>
+        <div class="bloque-titulo">Datos esenciales</div>
         <div class="grid2">
           <div class="campo"><label>Empresa *</label><input id="f_empresa" value="${esc(c.empresa||"")}"></div>
           <div class="campo"><label>Persona de contacto</label><input id="f_contacto" value="${esc(c.contacto||"")}"></div>
-          <div class="campo"><label>Cargo</label><input id="f_cargo" value="${esc(c.cargo||"")}"></div>
-          <div class="campo"><label>CIF / VAT</label><input id="f_vat" value="${esc(c.vat||"")}"></div>
-        </div>
-
-        <div class="bloque-titulo">Clasificación comercial</div>
-        <div class="grid2">
+          <div class="campo"><label>País</label><input id="f_pais" value="${esc(c.pais||"")}"></div>
+          <div class="campo"><label>Ciudad</label><input id="f_ciudad" value="${esc(c.ciudad||"")}"></div>
           <div class="campo"><label>Canal</label><select id="f_canal">${opc(CANALES, c.canal||"Otro")}</select></div>
           <div class="campo"><label>Estado</label><select id="f_estado">${opc(ESTADOS, c.estado||"potencial", e=>e.id, e=>e.label)}</select></div>
           <div class="campo"><label>Prioridad</label><select id="f_prioridad">${opc(PRIORIDADES, c.prioridad||"frio", p=>p.id, p=>p.label)}</select></div>
-        </div>
-
-        <div class="bloque-titulo">Ubicación</div>
-        <div class="grid2">
-          <div class="campo"><label>País</label><input id="f_pais" value="${esc(c.pais||"")}"></div>
-          <div class="campo"><label>Ciudad</label><input id="f_ciudad" value="${esc(c.ciudad||"")}"></div>
-          <div class="campo"><label>Dirección</label><input id="f_direccion" value="${esc(c.direccion||"")}"></div>
-        </div>
-
-        <div class="bloque-titulo">Contacto</div>
-        <div class="grid2">
           <div class="campo"><label>Email</label><input id="f_email" value="${esc(c.email||"")}"></div>
           <div class="campo"><label>Teléfono</label><input id="f_telefono" value="${esc(c.telefono||"")}"></div>
-          <div class="campo"><label>Web</label><input id="f_web" value="${esc(c.web||"")}"></div>
-          <div class="campo"><label>Idioma preferido</label><input id="f_idioma" value="${esc(c.idioma||"")}"></div>
-        </div>
-
-        <div class="bloque-titulo">Interés comercial</div>
-        <div class="grid2">
-          <div class="campo"><label>Volumen estimado por pedido</label><input id="f_volumen" value="${esc(c.volumen||"")}"></div>
-          <div class="campo"><label>Productos de interés (coma)</label><input id="f_productos" value="${esc((c.productos||[]).join(', '))}"></div>
         </div>
 
         <div class="bloque-titulo">Seguimiento</div>
-        <div class="grid2">
-          <div class="campo"><label>Próxima acción</label><input id="f_proxima" value="${esc(c.proximaAccion||"")}"></div>
-        </div>
+        <div class="campo"><label>Próxima acción</label><input id="f_proxima" value="${esc(c.proximaAccion||"")}"></div>
+        <div class="campo"><label>Comentarios manuales</label>
+          <textarea id="f_comentarios" placeholder="Notas personales, impresiones, lo hablado…">${esc(c.comentarios||"")}</textarea></div>
 
-        <div class="bloque-titulo">Comentarios manuales</div>
-        <div class="campo"><textarea id="f_comentarios" placeholder="Notas personales, impresiones, lo hablado…">${esc(c.comentarios||"")}</textarea></div>
+        <details class="avanzado" ${avanzadoAbierto(c) ? "open":""}>
+          <summary>Datos avanzados (fiscal, comercial, condiciones)</summary>
 
-        <div class="bloque-titulo">Condiciones comerciales</div>
-        <div class="grid2">
-          <div class="campo"><label>Precio acordado</label><input id="f_precio" value="${esc(c.precioAcordado||"")}"></div>
-          <div class="campo"><label>Divisa</label><input id="f_divisa" value="${esc(c.divisa||"")}" placeholder="€, USD, KRW…"></div>
-          <div class="campo"><label>Incoterm</label><input id="f_incoterm" value="${esc(c.incoterm||"")}" placeholder="EXW, FOB, CIF…"></div>
-          <div class="campo"><label>Notas de condiciones</label><input id="f_notascond" value="${esc(c.notasCondiciones||"")}"></div>
-        </div>
+          <div class="bloque-titulo">Identificación y contacto</div>
+          <div class="grid2">
+            <div class="campo"><label>Cargo</label><input id="f_cargo" value="${esc(c.cargo||"")}"></div>
+            <div class="campo"><label>CIF / VAT</label><input id="f_vat" value="${esc(c.vat||"")}"></div>
+            <div class="campo"><label>Dirección</label><input id="f_direccion" value="${esc(c.direccion||"")}"></div>
+            <div class="campo"><label>Web</label><input id="f_web" value="${esc(c.web||"")}"></div>
+            <div class="campo"><label>Idioma preferido</label><input id="f_idioma" value="${esc(c.idioma||"")}"></div>
+          </div>
+
+          <div class="bloque-titulo">Interés comercial</div>
+          <div class="grid2">
+            <div class="campo"><label>Volumen estimado por pedido</label><input id="f_volumen" value="${esc(c.volumen||"")}"></div>
+            <div class="campo"><label>Productos de interés (coma)</label><input id="f_productos" value="${esc((c.productos||[]).join(', '))}"></div>
+          </div>
+
+          <div class="bloque-titulo">Condiciones comerciales</div>
+          <div class="grid2">
+            <div class="campo"><label>Precio acordado</label><input id="f_precio" value="${esc(c.precioAcordado||"")}"></div>
+            <div class="campo"><label>Divisa</label><input id="f_divisa" value="${esc(c.divisa||"")}" placeholder="€, USD, KRW…"></div>
+            <div class="campo"><label>Incoterm</label><input id="f_incoterm" value="${esc(c.incoterm||"")}" placeholder="EXW, FOB, CIF…"></div>
+            <div class="campo"><label>Notas de condiciones</label><input id="f_notascond" value="${esc(c.notasCondiciones||"")}"></div>
+          </div>
+        </details>
 
         ${nuevo ? "" : `<div id="seccionHistorico">${htmlHistorico(c)}</div>`}
       </div>

@@ -1,8 +1,8 @@
 // ============================================================
 //  analisisUI.js · Pestaña Análisis (observaciones + gráficos)
 // ============================================================
-import { calcularMetricas, generarObservaciones } from "./analisis.js?v=27";
-import { ESTADOS, estadoInfo } from "./clientes.js?v=27";
+import { calcularMetricas, generarObservaciones } from "./analisis.js?v=29";
+import { ESTADOS, estadoInfo } from "./clientes.js?v=29";
 
 function esc(s){
   return (s??"").toString().replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");

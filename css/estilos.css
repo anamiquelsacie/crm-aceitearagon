@@ -430,3 +430,45 @@ tbody tr:last-child td{border-bottom:none}
 @media(max-width:560px){
   .bar-lbl{width:96px;font-size:11.5px}
 }
+
+/* ---------- Bloque avanzado plegable en ficha ---------- */
+.avanzado{
+  border:1px solid var(--linea);border-radius:11px;margin-top:18px;background:var(--fondo);
+  overflow:hidden;
+}
+.avanzado summary{
+  cursor:pointer;padding:12px 15px;font-size:13px;font-weight:600;color:var(--verde-hondo);
+  list-style:none;user-select:none;transition:.12s;
+}
+.avanzado summary::-webkit-details-marker{display:none}
+.avanzado summary:hover{background:var(--verde-suave)}
+.avanzado summary::before{content:"▸ ";}
+.avanzado[open] summary{border-bottom:1px solid var(--linea);background:var(--verde-suave)}
+.avanzado[open] summary::before{content:"▾ ";}
+.avanzado > *:not(summary){padding-left:15px;padding-right:15px}
+.avanzado > .bloque-titulo:first-of-type{margin-top:14px}
+.avanzado > div:last-child{padding-bottom:15px}
+
+/* ---------- Bloc de notas ---------- */
+.notas-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:13px;
+}
+.nota{
+  background:var(--blanco);border:1px solid var(--linea);border-radius:13px;padding:14px;
+  display:flex;flex-direction:column;gap:8px;min-height:130px;transition:.12s;
+}
+.nota:hover{box-shadow:var(--sombra)}
+.nota.fijada{background:#fffdf4;border-color:#ecd9b0}
+.nota-cab{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.nota-titulo{font-weight:700;font-size:14px;color:var(--tinta);line-height:1.3}
+.nota-pin{background:none;border:none;cursor:pointer;font-size:15px;opacity:.3;transition:.12s;flex-shrink:0}
+.nota-pin:hover{opacity:.7}
+.nota-pin.on{opacity:1}
+.nota-cuerpo{font-size:13px;color:var(--tinta);line-height:1.5;white-space:pre-wrap;word-break:break-word;flex:1}
+.nota-pie{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--linea);padding-top:8px;margin-top:4px}
+.nota-acc{display:flex;gap:3px}
+
+.nota-form{
+  background:var(--verde-suave);border:1px solid #d3e5db;border-radius:12px;padding:15px;margin-bottom:16px;
+}
+.nota-form-acc{display:flex;gap:9px;justify-content:flex-end}

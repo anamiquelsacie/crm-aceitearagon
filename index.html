@@ -8,7 +8,7 @@
 <meta http-equiv="Expires" content="0">
 <title>Aceite Aragón · CRM</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="css/estilos.css?v=27">
+<link rel="stylesheet" href="css/estilos.css?v=29">
 </head>
 <body>
 
@@ -36,6 +36,7 @@
       <button class="tab" data-tab="plantillas">Plantillas</button>
       <button class="tab" data-tab="agenda">Agenda</button>
       <button class="tab" data-tab="analisis">Análisis</button>
+      <button class="tab" data-tab="notas">Notas</button>
     </div>
 
     <!-- ===== Vista CLIENTES ===== -->
@@ -98,12 +99,15 @@
 
     <!-- ===== Vista ANÁLISIS ===== -->
     <div id="vista-analisis" class="oculto"></div>
+
+    <!-- ===== Vista NOTAS ===== -->
+    <div id="vista-notas" class="oculto"></div>
   </div>
 
   <!-- ===== Modal ficha (se rellena por JS) ===== -->
   <div id="modal"></div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script type="module" src="js/app.js?v=27"></script>
+  <script type="module" src="js/app.js?v=29"></script>
 </body>
 </html>
