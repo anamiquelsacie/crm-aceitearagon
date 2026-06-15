@@ -3,7 +3,9 @@
 // ============================================================
 import { vigilarSesion, salir } from "./auth.js";
 import {
-  escucharClientes, getClientes, crearCliente, actualizarCliente, altaRapida,
+  escucharClientes, getClientes, getActivos, getArchivados,
+  crearCliente, actualizarCliente, altaRapida,
+  archivarCliente, restaurarCliente, borrarClienteDefinitivo,
   ESTADOS, CANALES, PRIORIDADES, PRODUCTOS,
   estadoInfo, prioridadInfo, bandera
 } from "./clientes.js";
@@ -85,7 +87,7 @@ function textoUltima(c){
 
 // ---------- Render principal ----------
 function render(){
-  const todos = getClientes();
+  const todos = getActivos();
   renderResumen(todos);
   const lista = aplicarFiltrosYOrden(todos);
   renderTabla(lista);
@@ -181,7 +183,7 @@ function poblarSelectores(){
 function refrescarPaises(){
   const fPais = document.getElementById("fPais");
   const actual = fPais.value;
-  const paises = [...new Set(getClientes().map(c=>c.pais).filter(Boolean))].sort();
+  const paises = [...new Set(getActivos().map(c=>c.pais).filter(Boolean))].sort();
   fPais.innerHTML = `<option value="">🌍 Todos los países</option>` +
     paises.map(p=>`<option value="${p}">${bandera(p)} ${p}</option>`).join("");
   fPais.value = actual;
@@ -207,6 +209,7 @@ function conectarToolbar(){
   });
   document.getElementById("btnNuevo").addEventListener("click", ()=> abrirFicha(null));
   document.getElementById("btnAlta").addEventListener("click", abrirAltaRapida);
+  document.getElementById("btnPapelera").addEventListener("click", abrirPapelera);
 
   // refrescar la lista de países cada vez que cambian los datos
   const obs = new MutationObserver(()=> refrescarPaises());
@@ -283,6 +286,7 @@ function abrirFicha(id){
         ${nuevo ? "" : `<div id="seccionHistorico">${htmlHistorico(c)}</div>`}
       </div>
       <div class="modal-foot">
+        ${nuevo ? "" : `<button class="btn btn-rojo" id="archivar" style="margin-right:auto">🗑 Archivar</button>`}
         <button class="btn btn-ghost" id="cancelar">Cancelar</button>
         <button class="btn btn-primary" id="guardar">${nuevo?"Crear cliente":"Guardar cambios"}</button>
       </div>
@@ -297,6 +301,13 @@ function abrirFicha(id){
   // Histórico de interacciones (solo clientes existentes)
   if(!nuevo){
     conectarHistorico(c, ()=> abrirFicha(id));
+    document.getElementById("archivar").addEventListener("click", async ()=>{
+      if(!confirm(`¿Archivar "${c.empresa}"?\n\nDesaparecerá de la lista y el mapa, pero podrás recuperarlo desde la papelera.`)) return;
+      try{
+        await archivarCliente(id);
+        cerrar();
+      }catch(e){ console.error(e); alert("No se ha podido archivar."); }
+    });
   }
 
   document.getElementById("guardar").addEventListener("click", async ()=>{
@@ -365,6 +376,59 @@ function abrirAltaRapida(){
       console.error(e); alert("No se han podido añadir. Revisa tu conexión.");
       btn.disabled=false; btn.textContent="Añadir al pipeline";
     }
+  });
+}
+
+// ---------- Papelera (clientes archivados) ----------
+function abrirPapelera(){
+  const archivados = getArchivados();
+  const filas = archivados.length ? archivados.map(c=>`
+    <div class="papelera-item">
+      <div class="papelera-info">
+        <span class="flag">${bandera(c.pais)}</span>
+        <div>
+          <div class="papelera-nombre">${esc(c.empresa)}</div>
+          <div class="muted">${esc(c.pais||"")}${c.ciudad?" · "+esc(c.ciudad):""}</div>
+        </div>
+      </div>
+      <div class="papelera-acc">
+        <button class="btn btn-ghost" data-restaurar="${c.id}">↩ Restaurar</button>
+        <button class="btn btn-rojo" data-borrar="${c.id}">Borrar definitivo</button>
+      </div>
+    </div>`).join("") : `<div class="hist-vacio">La papelera está vacía.</div>`;
+
+  document.getElementById("modal").innerHTML = `
+  <div class="modal-bg">
+    <div class="modal" style="max-width:560px">
+      <div class="modal-head">
+        <h3>Papelera · ${archivados.length} archivado${archivados.length!==1?"s":""}</h3>
+        <button class="modal-x" id="cerrar">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="sub" style="color:var(--gris);font-size:13px;margin-bottom:14px">
+          Los clientes archivados no aparecen en la lista ni en el mapa. Puedes restaurarlos,
+          o borrarlos definitivamente (esto sí elimina sus datos de forma irreversible, p. ej. si te lo pide el cliente).</p>
+        <div class="papelera-lista">${filas}</div>
+      </div>
+    </div>
+  </div>`;
+  const cerrar = ()=> document.getElementById("modal").innerHTML="";
+  document.getElementById("cerrar").addEventListener("click", cerrar);
+  document.querySelector(".modal-bg").addEventListener("click", e=>{ if(e.target.classList.contains("modal-bg")) cerrar(); });
+
+  document.querySelectorAll("[data-restaurar]").forEach(b=>{
+    b.addEventListener("click", async ()=>{
+      try{ await restaurarCliente(b.dataset.restaurar); abrirPapelera(); }
+      catch(e){ console.error(e); alert("No se ha podido restaurar."); }
+    });
+  });
+  document.querySelectorAll("[data-borrar]").forEach(b=>{
+    b.addEventListener("click", async ()=>{
+      const c = getArchivados().find(x=>x.id===b.dataset.borrar);
+      if(!confirm(`Borrar DEFINITIVAMENTE a "${c?.empresa}".\n\nEsto elimina todos sus datos para siempre y no se puede deshacer. ¿Continuar?`)) return;
+      try{ await borrarClienteDefinitivo(b.dataset.borrar); abrirPapelera(); }
+      catch(e){ console.error(e); alert("No se ha podido borrar."); }
+    });
   });
 }
 

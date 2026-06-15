@@ -320,3 +320,14 @@ tbody tr:last-child td{border-bottom:none}
   font-family:inherit;transition:.12s;
 }
 .popup-btn:hover{background:var(--verde-hondo)}
+
+/* ---------- Papelera ---------- */
+.papelera-lista{display:flex;flex-direction:column;gap:9px}
+.papelera-item{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  background:var(--fondo);border:1px solid var(--linea);border-radius:11px;padding:11px 13px;
+}
+.papelera-info{display:flex;align-items:center;gap:11px}
+.papelera-nombre{font-weight:600;font-size:14px;color:var(--tinta)}
+.papelera-acc{display:flex;gap:8px}
+.papelera-acc .btn{padding:7px 12px;font-size:12.5px}
